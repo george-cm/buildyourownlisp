@@ -1,1 +1,1 @@
-cc -std=c99 -Wall prompt.c -o prompt
+cc -std=c99 -Wall prompt.c -ledit -o prompt
