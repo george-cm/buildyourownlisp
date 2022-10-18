@@ -1,6 +1,7 @@
 prompt
 *.zip
 *.exe
+wineditline-2.206
 
 # Prerequisites
 *.d
