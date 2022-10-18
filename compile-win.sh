@@ -1,0 +1,1 @@
+cc -std=c99 -Wall -o prompt.exe prompt.c wineditline-2.206/bin64/edit.lib
