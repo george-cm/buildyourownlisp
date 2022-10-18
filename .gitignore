@@ -1,4 +1,6 @@
 prompt
+*.zip
+*.exe
 
 # Prerequisites
 *.d
