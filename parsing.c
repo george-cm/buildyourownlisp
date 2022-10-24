@@ -29,6 +29,10 @@
 #include <editline/history.h>
 #endif
 
+long eval(mpc_ast_t *t);
+long eval_op(long x, char *op, long y);
+void print_node(mpc_ast_t *node);
+
 int main(int argc, char **argv)
 {
 
@@ -67,6 +71,9 @@ int main(int argc, char **argv)
         {
             /* On success print the AST */
             mpc_ast_print(r.output);
+            // print_node(r.output);
+            long result = eval(r.output);
+            printf("%li\n", result);
             mpc_ast_delete(r.output);
         }
         else
@@ -84,4 +91,58 @@ int main(int argc, char **argv)
     mpc_cleanup(4, Number, Operator, Expr, Lispy);
 
     return 0;
+}
+
+long eval(mpc_ast_t *t)
+{
+    print_node(t);
+    /* If tagged as number return it directly. */
+    if (strstr(t->tag, "number"))
+    {
+        return atoi(t->contents);
+    }
+
+    /* The operator is always second child. */
+    char *op = t->children[1]->contents;
+    print_node(t->children[1]);
+    /* We store the third child in 'x' */
+    long x = eval(t->children[2]);
+
+    /* Iterate the remaining children and combining. */
+    int i = 3;
+    while (strstr(t->children[i]->tag, "expr"))
+    {
+        x = eval_op(x, op, eval(t->children[i]));
+        i++;
+    }
+    return x;
+}
+
+/* Use operator string to see which operation to perform */
+long eval_op(long x, char *op, long y)
+{
+    if (strcmp(op, "+") == 0)
+    {
+        return x + y;
+    }
+    if (strcmp(op, "-") == 0)
+    {
+        return x - y;
+    }
+    if (strcmp(op, "*") == 0)
+    {
+        return x * y;
+    }
+    if (strcmp(op, "/") == 0)
+    {
+        return x / y;
+    }
+    return 0;
+}
+
+void print_node(mpc_ast_t *node)
+{
+    printf("Tag: %s\n", node->tag);
+    printf("Contents: %s\n", node->contents);
+    printf("Number of children: %i\n", node->children_num);
 }
